@@ -25,7 +25,7 @@ const predictionValue = document.getElementById('predictionValue');
 // FastAPI endpoint
 // ===============================
 
-const DEFAULT_API = 'http://127.0.0.1:8000/predict';
+const DEFAULT_API = 'https://credit-risk-assessment-o5qn.onrender.com';
 
 
 // ===============================
