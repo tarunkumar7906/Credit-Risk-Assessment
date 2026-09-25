@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Credit Risk Assessment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="page">
+
+  <header class="masthead">
+    <div class="masthead-mark">CR</div>
+    <div class="masthead-text">
+      <h1>Credit Risk Assessment</h1>
+      <p>Enter applicant and loan details to estimate default probability.</p>
+    </div>
+  </header>
+
+  <main class="layout">
+
+    <!-- LEFT: FORM -->
+    <section class="ledger" aria-label="Loan application form">
+      <form id="riskForm" novalidate>
+
+        <div class="ledger-group">
+          <h2>Applicant</h2>
+
+          <div class="field">
+            <label for="person_age">Age</label>
+            <input type="number" id="person_age" name="person_age" min="18" max="100" placeholder="30" required>
+          </div>
+
+          <div class="field">
+            <label for="person_income">Annual income (USD)</label>
+            <input type="number" id="person_income" name="person_income" min="0" step="100" placeholder="55000" required>
+          </div>
+
+          <div class="field">
+            <label for="person_home_ownership">Home ownership</label>
+            <select id="person_home_ownership" name="person_home_ownership" required>
+              <option value="" disabled selected>Select one</option>
+              <option value="RENT">Rent</option>
+              <option value="OWN">Own</option>
+              <option value="MORTGAGE">Mortgage</option>
+              <option value="OTHER">Other</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="person_emp_length">Employment length (years)</label>
+            <input type="number" id="person_emp_length" name="person_emp_length" min="0" max="60" step="0.1" placeholder="5" required>
+          </div>
+        </div>
+
+        <div class="ledger-divider"></div>
+
+        <div class="ledger-group">
+          <h2>Loan</h2>
+
+          <div class="field">
+            <label for="loan_intent">Loan intent</label>
+            <select id="loan_intent" name="loan_intent" required>
+              <option value="" disabled selected>Select one</option>
+              <option value="PERSONAL">Personal</option>
+              <option value="EDUCATION">Education</option>
+              <option value="MEDICAL">Medical</option>
+              <option value="VENTURE">Venture</option>
+              <option value="HOMEIMPROVEMENT">Home improvement</option>
+              <option value="DEBTCONSOLIDATION">Debt consolidation</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="loan_grade">Loan grade</label>
+            <select id="loan_grade" name="loan_grade" required>
+              <option value="" disabled selected>Select one</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+              <option value="E">E</option>
+              <option value="F">F</option>
+              <option value="G">G</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="loan_amnt">Loan amount (USD)</label>
+            <input type="number" id="loan_amnt" name="loan_amnt" min="0" step="100" placeholder="10000" required>
+          </div>
+
+          <div class="field">
+            <label for="loan_int_rate">Interest rate (%)</label>
+            <input type="number" id="loan_int_rate" name="loan_int_rate" min="0" max="40" step="0.01" placeholder="11.5" required>
+          </div>
+
+          <div class="field">
+            <label for="loan_percent_income">Loan as % of income</label>
+            <input type="number" id="loan_percent_income" name="loan_percent_income" min="0" max="1" step="0.01" placeholder="0.18" required>
+          </div>
+        </div>
+
+        <div class="ledger-divider"></div>
+
+        <div class="ledger-group">
+          <h2>Credit history</h2>
+
+          <div class="field">
+            <label for="cb_person_default_on_file">Prior default on file</label>
+            <select id="cb_person_default_on_file" name="cb_person_default_on_file" required>
+              <option value="" disabled selected>Select one</option>
+              <option value="Y">Yes</option>
+              <option value="N">No</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="cb_person_cred_hist_length">Credit history length (years)</label>
+            <input type="number" id="cb_person_cred_hist_length" name="cb_person_cred_hist_length" min="0" max="60" placeholder="8" required>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <span class="submit-btn-label">Assess risk</span>
+        </button>
+
+        <p class="form-error" id="formError" role="alert"></p>
+
+      </form>
+    </section>
+
+    <!-- RIGHT: RESULT -->
+    <section class="result" aria-label="Risk assessment result" aria-live="polite">
+
+      <div class="result-empty" id="resultEmpty">
+        <div class="result-empty-mark">
+          <svg viewBox="0 0 120 120" width="72" height="72" aria-hidden="true">
+            <circle cx="60" cy="60" r="52" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 6"/>
+          </svg>
+        </div>
+        <p>Fill in the form and submit to see the default probability estimate.</p>
+      </div>
+
+      <div class="result-loading" id="resultLoading" hidden>
+        <div class="spinner" aria-hidden="true"></div>
+        <p>Scoring application&hellip;</p>
+      </div>
+
+      <div class="result-content" id="resultContent" hidden>
+
+        <div class="gauge-wrap">
+          <svg class="gauge" viewBox="0 0 240 140" aria-hidden="true">
+            <path class="gauge-track" d="M 20 120 A 100 100 0 0 1 220 120" fill="none" stroke-width="14" stroke-linecap="round"/>
+            <path class="gauge-fill" id="gaugeFill" d="M 20 120 A 100 100 0 0 1 220 120" fill="none" stroke-width="14" stroke-linecap="round"/>
+          </svg>
+          <div class="gauge-number">
+            <span id="probValue">0</span><span class="gauge-percent">%</span>
+          </div>
+          <div class="gauge-label">default probability</div>
+        </div>
+
+        <div class="verdict" id="verdict">
+          <span class="verdict-dot" id="verdictDot"></span>
+          <span class="verdict-text" id="verdictText">&mdash;</span>
+        </div>
+
+        <dl class="result-meta">
+          <div>
+            <dt>Threshold used</dt>
+            <dd id="thresholdValue">&mdash;</dd>
+          </div>
+          <div>
+            <dt>Model output</dt>
+            <dd id="predictionValue">&mdash;</dd>
+          </div>
+        </dl>
+
+      </div>
+
+      <div class="result-error" id="resultErrorBox" hidden>
+        <p class="result-error-title">Couldn't score this application</p>
+        <p class="result-error-detail" id="resultErrorDetail"></p>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer class="page-footer">
+    <p>Estimates are produced by a statistical model and are not a lending decision.</p>
+  </footer>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
